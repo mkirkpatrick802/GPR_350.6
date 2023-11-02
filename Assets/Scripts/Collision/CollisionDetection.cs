@@ -61,8 +61,8 @@ public static class CollisionDetection
 
         collisionFns[(int)Shape.Sphere, (int)Shape.Sphere] = TestSphereSphere;
         AddCollisionFns(Shape.Sphere, Shape.Plane, TestSpherePlane);
-
-        // TODO: Add additional collider functions here
+        AddCollisionFns(Shape.Sphere, Shape.AABB, TestSphereAABB);
+        AddCollisionFns(Shape.Sphere, Shape.OBB, TestSphereOBB);
 
         // Static colliders do nothing
         NormalAndPenCalculation nop = (PhysicsCollider _, PhysicsCollider _, out Vector3 n, out float p) => { n = Vector3.zero; p = -1; };
@@ -109,10 +109,27 @@ public static class CollisionDetection
         penetration = s.Radius - dist;
         normal = offset >= 0 ? p.Normal : -p.Normal;
     }
-
-    // TODO: YOUR CODE HERE
-    // Add new functions for sphere-AABB and sphere-OBB tests.
-
+    
+    //TODO Finish This
+    public static void TestSphereAABB(PhysicsCollider s1, PhysicsCollider s2, out Vector3 normal, out float penetration)
+    {
+        Sphere s = s1 as Sphere;
+        AABB box = s2 as AABB;
+        
+        penetration = 0;
+        normal = Vector3.zero;
+    }
+    
+    //TODO Finish This
+    public static void TestSphereOBB(PhysicsCollider s1, PhysicsCollider s2, out Vector3 normal, out float penetration)
+    {
+        Sphere s = s1 as Sphere;
+        OBB box = s2 as OBB;
+        
+        penetration = 0;
+        normal = Vector3.zero;
+    }
+    
     public static CollisionInfo GetCollisionInfo(PhysicsCollider s1, PhysicsCollider s2)
     {
         CollisionInfo info = new CollisionInfo();

@@ -110,7 +110,6 @@ public static class CollisionDetection
         normal = offset >= 0 ? p.Normal : -p.Normal;
     }
     
-    //TODO Finish This
     public static void TestSphereAABB(PhysicsCollider s1, PhysicsCollider s2, out Vector3 normal, out float penetration)
     {
         Sphere s = s1 as Sphere;
@@ -149,11 +148,10 @@ public static class CollisionDetection
         if (!s || !box) return;
         
         //Apply Rotation to Box and Sphere
-        Quaternion baseRotation = s.transform.rotation;
-        s.transform.rotation = box.transform.localToWorldMatrix.rotation;
+        Vector3 sLocal = box.transform.localToWorldMatrix.inverse.rotation * s.position;
         
         //Get Closest Point
-        Vector3 closestPoint = s.transform.position;
+        Vector3 closestPoint = sLocal;
         for (int i = 0; i < 3; i++)
         {
             float axis = closestPoint[i];
@@ -163,10 +161,10 @@ public static class CollisionDetection
             if (axis > max) axis = max;
             closestPoint[i] = axis;
         }
-        
-        //Undo Rotation to Box and Sphere
-        s.transform.rotation = baseRotation;
-        
+
+        Vector3 difference = sLocal - closestPoint;
+        penetration = s.Radius - difference.magnitude;
+        normal = difference.normalized;
     }
     
     public static CollisionInfo GetCollisionInfo(PhysicsCollider s1, PhysicsCollider s2)

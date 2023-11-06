@@ -115,9 +115,26 @@ public static class CollisionDetection
     {
         Sphere s = s1 as Sphere;
         AABB box = s2 as AABB;
-        
+
         penetration = 0;
         normal = Vector3.zero;
+        
+        if (!s || !box) return;
+        
+        Vector3 closestPoint = s.transform.position;
+        for (int i = 0; i < 3; i++)
+        {
+            float axis = closestPoint[i];
+            float min = box.transform.position[i] - box.bounds[i];
+            float max = box.transform.position[i] + box.bounds[i];
+            if (axis < min) axis = min;
+            if (axis > max) axis = max;
+            closestPoint[i] = axis;
+        }
+        
+        Vector3 difference = s.transform.position - closestPoint;
+        penetration = s.Radius - difference.magnitude;
+        normal = difference.normalized;
     }
     
     //TODO Finish This
@@ -128,6 +145,28 @@ public static class CollisionDetection
         
         penetration = 0;
         normal = Vector3.zero;
+        
+        if (!s || !box) return;
+        
+        //Apply Rotation to Box and Sphere
+        Quaternion baseRotation = s.transform.rotation;
+        s.transform.rotation = box.transform.localToWorldMatrix.rotation;
+        
+        //Get Closest Point
+        Vector3 closestPoint = s.transform.position;
+        for (int i = 0; i < 3; i++)
+        {
+            float axis = closestPoint[i];
+            float min = box.transform.localPosition[i] - box.bounds[i];
+            float max = box.transform.localPosition[i] + box.bounds[i];
+            if (axis < min) axis = min;
+            if (axis > max) axis = max;
+            closestPoint[i] = axis;
+        }
+        
+        //Undo Rotation to Box and Sphere
+        s.transform.rotation = baseRotation;
+        
     }
     
     public static CollisionInfo GetCollisionInfo(PhysicsCollider s1, PhysicsCollider s2)

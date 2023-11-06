@@ -8,6 +8,8 @@ public class OBB : PhysicsCollider
     public float halfLength;
     public Quaternion rotation;
     
+    public float[] bounds = new float[3];
+    
     public override Shape shape => Shape.OBB;
     
     private void Awake()
@@ -17,7 +19,9 @@ public class OBB : PhysicsCollider
         halfWidth = localScale.x / 2;
         halfHeight = localScale.y / 2;
         halfLength = localScale.z / 2;
-
-        rotation = localTransform.rotation;
+        
+        bounds[0] = halfWidth;
+        bounds[1] = halfHeight;
+        bounds[2] = halfLength;
     }
 }

@@ -148,21 +148,24 @@ public static class CollisionDetection
         if (!s || !box) return;
         
         //Apply Rotation to Box and Sphere
-        Vector3 sLocal = box.transform.localToWorldMatrix.inverse.rotation * s.position;
+        var matrix = box.transform.localToWorldMatrix;
+        Vector3 sLocal = matrix.inverse * new Vector4(s.position.x, s.position.y, s.position.z, 1);
+        Vector3 bLocal = matrix.inverse * new Vector4(box.position.x, box.position.y, box.position.z, 1);
         
         //Get Closest Point
         Vector3 closestPoint = sLocal;
         for (int i = 0; i < 3; i++)
         {
             float axis = closestPoint[i];
-            float min = box.transform.localPosition[i] - box.bounds[i];
-            float max = box.transform.localPosition[i] + box.bounds[i];
+            float min = bLocal[i] - box.bounds[i];
+            float max = bLocal[i] + box.bounds[i];
             if (axis < min) axis = min;
             if (axis > max) axis = max;
             closestPoint[i] = axis;
         }
 
         Vector3 difference = sLocal - closestPoint;
+        difference = matrix * new Vector4(difference.x, difference.y, difference.z, 0);
         penetration = s.Radius - difference.magnitude;
         normal = difference.normalized;
     }
